@@ -1,6 +1,7 @@
-import { Routes, Route } from 'react-router-dom'; // ✅ شيلنا BrowserRouter
+import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import './i18n';
+import ScrollToTop from './ScrollToTop'; // ✅ استورد ScrollToTop
 
 // Components
 import Navbar from './components/Navbar';
@@ -24,7 +25,7 @@ import CMSManagement from './pages/CMSManagement';
 function App() {
   return (
     <AuthProvider>
-      {/* ✅ شلنا <Router> من هنا لأنه موجود في main.jsx */}
+      <ScrollToTop /> {/* ✅ حطيناه هنا */}
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-grow">
