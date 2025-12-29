@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../utils/axios'; // ✅ استخدم api instance
+import api from '../utils/axios';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaArrowRight, FaBox, FaSearch } from 'react-icons/fa';
@@ -10,22 +10,36 @@ const Products = () => {
   const lang = i18n.language;
 
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // ✅ Dynamic categories
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const categories = [
-    { value: 'all', label: { en: 'All Products', ar: 'جميع المنتجات', es: 'Todos los Productos' } },
-    { value: 'pickled-olives', label: { en: 'Pickled Olives', ar: 'زيتون مخلل', es: 'Aceitunas en Vinagre' } },
-    { value: 'olive', label: { en: 'Olive Oil', ar: ' زيتون', es: '  Oliva' } },
-    { value: 'olive-paste', label: { en: 'Olive Paste', ar: 'معجون زيتون', es: 'Pasta de Aceituna' } },
-    { value: 'stuffed-olives', label: { en: 'Stuffed Olives', ar: 'زيتون محشي', es: 'Aceitunas Rellenas' } },
-    { value: 'other', label: { en: 'Other', ar: 'أخرى', es: 'Otros' } }
-  ];
+  // ✅ Fetch categories from API
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get('/api/categories');
+      const allCategory = {
+        value: 'all',
+        label: { en: 'All Products', ar: 'جميع المنتجات', es: 'Todos los Productos' }
+      };
+      setCategories([allCategory, ...response.data]);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+      // Fallback to hardcoded if API fails
+      setCategories([
+        { value: 'all', label: { en: 'All Products', ar: 'جميع المنتجات', es: 'Todos los Productos' } }
+      ]);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -144,7 +158,7 @@ const Products = () => {
             </div>
           </div>
 
-          {/* Category Filter */}
+          {/* Category Filter - ✅ Dynamic */}
           <div className="flex flex-wrap gap-4 justify-center">
             {categories.map((category, index) => (
               <motion.button
@@ -159,7 +173,7 @@ const Products = () => {
                     : 'bg-white text-gray-700 hover:bg-primary hover:text-white shadow-md'
                 }`}
               >
-                {category.label[lang]}
+                {category.label[lang] || category.label.en}
               </motion.button>
             ))}
           </div>
@@ -204,7 +218,7 @@ const Products = () => {
                       }}
                     />
                     
-                    {/* Category Badge */}
+                    {/* Category Badge - ✅ Dynamic */}
                     {product.category && (
                       <div className="absolute top-4 left-4">
                         <span className="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold shadow-lg">

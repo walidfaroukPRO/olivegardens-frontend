@@ -20,12 +20,9 @@ const Login = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-      console.log('✅ Already authenticated');
       if (isAdmin) {
-        console.log('➡️ Redirecting admin to /admin');
         navigate('/admin', { replace: true });
       } else {
-        console.log('➡️ Redirecting user to /');
         navigate('/', { replace: true });
       }
     }
@@ -43,12 +40,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('🔐 ========================================');
-    console.log('🔐 Login Form Submitted');
-    console.log('🔐 ========================================');
-    console.log('📧 Email:', formData.email);
-    console.log('🔒 Password:', formData.password ? '***' : 'Empty');
-    
     if (!formData.email || !formData.password) {
       setError('Please enter both email and password');
       return;
@@ -60,31 +51,20 @@ const Login = () => {
     try {
       const result = await login(formData.email, formData.password);
       
-      console.log('🔐 Login Result:', result);
-      
       if (result.success) {
-        console.log('✅ Login successful!');
-        console.log('👤 User:', result.user);
-        console.log('🎭 Role:', result.user?.role);
-        
-        // ✅ Redirect based on role - ADMIN ONLY to /admin
+        // Redirect based on role
         if (result.user?.role === 'admin') {
-          console.log('➡️ Admin user - Redirecting to /admin');
           navigate('/admin', { replace: true });
         } else {
-          console.log('➡️ Regular user - Redirecting to /');
           navigate('/', { replace: true });
         }
       } else {
-        console.error('❌ Login failed:', result.message);
         setError(result.message || 'Invalid email or password');
       }
     } catch (err) {
-      console.error('❌ Unexpected error:', err);
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
-      console.log('🔐 ========================================\n');
     }
   };
 

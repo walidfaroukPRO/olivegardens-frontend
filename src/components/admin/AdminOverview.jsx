@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { 
   FaBox, FaEnvelope, FaEnvelopeOpen, FaUsers, FaImage, FaChartLine, 
-  FaCheckCircle, FaExclamationCircle, FaArrowUp, FaArrowDown 
+  FaCheckCircle, FaExclamationCircle, FaTags
 } from 'react-icons/fa';
+import LiveVisitors from './LiveVisitors'; // ✅ Import LiveVisitors
 
 const AdminOverview = () => {
   const { i18n } = useTranslation();
@@ -16,7 +17,8 @@ const AdminOverview = () => {
     totalMessages: 0,
     unreadMessages: 0,
     totalUsers: 0,
-    totalGallery: 0
+    totalGallery: 0,
+    totalCategories: 0 // ✅ Added
   });
 
   const [loading, setLoading] = useState(true);
@@ -26,46 +28,52 @@ const AdminOverview = () => {
     fetchStats();
   }, []);
 
-const fetchStats = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const headers = { Authorization: `Bearer ${token}` };
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
 
-    // Fetch all stats with error handling for each
-    const results = await Promise.allSettled([
-      axios.get('/api/products', { headers }),
-      axios.get('/api/contact', { headers }), // ✅ شلنا /messages
-      axios.get('/api/users', { headers }),
-      axios.get('/api/gallery', { headers })
-    ]);
+      // Fetch all stats with error handling for each
+      const results = await Promise.allSettled([
+        axios.get('/api/products', { headers }),
+        axios.get('/api/contact', { headers }),
+        axios.get('/api/users', { headers }),
+        axios.get('/api/gallery', { headers }),
+        axios.get('/api/categories') // ✅ Added categories
+      ]);
 
-    // Process products
-    const products = results[0].status === 'fulfilled' ? results[0].value.data : [];
-    
-    // Process messages
-    const messages = results[1].status === 'fulfilled' ? results[1].value.data : [];
-    
-    // Process users
-    const users = results[2].status === 'fulfilled' ? results[2].value.data : [];
-    
-    // Process gallery
-    const gallery = results[3].status === 'fulfilled' ? results[3].value.data : [];
+      // Process products
+      const products = results[0].status === 'fulfilled' ? results[0].value.data : [];
+      
+      // Process messages
+      const messages = results[1].status === 'fulfilled' ? results[1].value.data : [];
+      
+      // Process users
+      const users = results[2].status === 'fulfilled' ? results[2].value.data : [];
+      
+      // Process gallery
+      const gallery = results[3].status === 'fulfilled' ? results[3].value.data : [];
 
-    setStats({
-      totalProducts: products.length,
-      activeProducts: products.filter(p => p.isActive).length,
-      totalMessages: messages.length,
-      unreadMessages: messages.filter(m => m.status === 'pending').length, // ✅ غيرنا !m.isRead لـ m.status === 'pending'
-      totalUsers: users.length,
-      totalGallery: gallery.length
-    });
+      // Process categories
+      const categories = results[4].status === 'fulfilled' ? results[4].value.data : [];
 
-  } catch (error) {
-    setError('Failed to load statistics');
-  } finally {
-    setLoading(false);
-  }
-};
+      setStats({
+        totalProducts: products.length,
+        activeProducts: products.filter(p => p.isActive).length,
+        totalMessages: messages.length,
+        unreadMessages: messages.filter(m => m.status === 'pending').length,
+        totalUsers: users.length,
+        totalGallery: gallery.length,
+        totalCategories: categories.length
+      });
+
+    } catch (error) {
+      setError('Failed to load statistics');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const statCards = [
     {
       title: { en: 'Total Products', ar: 'إجمالي المنتجات', es: 'Productos Totales' },
@@ -82,6 +90,14 @@ const fetchStats = async () => {
       color: 'from-green-500 to-green-600',
       textColor: 'text-green-600',
       bgColor: 'bg-green-50'
+    },
+    {
+      title: { en: 'Categories', ar: 'التصنيفات', es: 'Categorías' },
+      value: stats.totalCategories,
+      icon: <FaTags />,
+      color: 'from-indigo-500 to-indigo-600',
+      textColor: 'text-indigo-600',
+      bgColor: 'bg-indigo-50'
     },
     {
       title: { en: 'Total Messages', ar: 'إجمالي الرسائل', es: 'Mensajes Totales' },
@@ -154,8 +170,31 @@ const fetchStats = async () => {
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Live Visitors - ✅ First Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1">
+          <LiveVisitors />
+        </div>
+        
+        {/* Quick Stats */}
+        <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4">
+          {statCards.slice(0, 6).map((stat, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 p-4"
+            >
+              <div className={`w-10 h-10 ${stat.bgColor} rounded-lg flex items-center justify-center mb-3`}>
+                <span className={`text-lg ${stat.textColor}`}>{stat.icon}</span>
+              </div>
+              <div className="text-2xl font-bold text-gray-800">{stat.value}</div>
+              <div className="text-sm text-gray-600">{stat.title[lang]}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => (
           <div
             key={index}
@@ -276,11 +315,16 @@ const fetchStats = async () => {
         <h3 className="text-2xl font-bold mb-6">
           {lang === 'ar' ? 'إجراءات سريعة' : 'Quick Actions'}
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl p-4 transition-all cursor-pointer">
             <FaBox className="text-3xl mb-3" />
             <div className="font-semibold">{lang === 'ar' ? 'إضافة منتج' : 'Add Product'}</div>
             <div className="text-sm text-gray-300 mt-1">{stats.totalProducts} {lang === 'ar' ? 'منتج' : 'products'}</div>
+          </div>
+          <div className="bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl p-4 transition-all cursor-pointer">
+            <FaTags className="text-3xl mb-3" />
+            <div className="font-semibold">{lang === 'ar' ? 'إدارة التصنيفات' : 'Manage Categories'}</div>
+            <div className="text-sm text-gray-300 mt-1">{stats.totalCategories} {lang === 'ar' ? 'تصنيف' : 'categories'}</div>
           </div>
           <div className="bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl p-4 transition-all cursor-pointer">
             <FaEnvelope className="text-3xl mb-3" />

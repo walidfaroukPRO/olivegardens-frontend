@@ -8,6 +8,7 @@ const AdminProducts = () => {
   const lang = i18n.language;
 
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // ✅ Dynamic categories
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -17,7 +18,7 @@ const AdminProducts = () => {
   const [formData, setFormData] = useState({
     name: { en: '', ar: '', es: '' },
     description: { en: '', ar: '', es: '' },
-    category: 'pickled-olives',
+    category: '',
     specifications: {
       weight: '',
       packaging: { en: '', ar: '', es: '' },
@@ -53,7 +54,23 @@ const AdminProducts = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories(); // ✅ Fetch categories
   }, []);
+
+  // ✅ Fetch categories from API
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('/api/categories');
+      setCategories(response.data);
+      
+      // Set first category as default if available
+      if (response.data.length > 0 && !formData.category) {
+        setFormData(prev => ({ ...prev, category: response.data[0].value }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -101,7 +118,7 @@ const AdminProducts = () => {
     setFormData({
       name: { en: '', ar: '', es: '' },
       description: { en: '', ar: '', es: '' },
-      category: 'pickled-olives',
+      category: categories.length > 0 ? categories[0].value : '',
       specifications: {
         weight: '',
         packaging: { en: '', ar: '', es: '' },
@@ -151,7 +168,7 @@ const AdminProducts = () => {
   };
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name[lang].toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = product.name[lang]?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
     const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
@@ -180,17 +197,18 @@ const AdminProducts = () => {
           />
         </div>
 
-        {/* Filter */}
+        {/* Filter - ✅ Dynamic */}
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
           className="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary"
         >
           <option value="all">{lang === 'ar' ? 'الكل' : 'All Categories'}</option>
-          <option value="pickled-olives">{lang === 'ar' ? 'زيتون مخلل' : 'Pickled Olives'}</option>
-          <option value="olive-oil">{lang === 'ar' ? 'زيت زيتون' : 'Olive Oil'}</option>
-          <option value="olive-paste">{lang === 'ar' ? 'معجون زيتون' : 'Olive Paste'}</option>
-          <option value="stuffed-olives">{lang === 'ar' ? 'زيتون محشي' : 'Stuffed Olives'}</option>
+          {categories.map(cat => (
+            <option key={cat.value} value={cat.value}>
+              {cat.label[lang] || cat.label.en}
+            </option>
+          ))}
         </select>
 
         {/* Add Button */}
@@ -230,7 +248,11 @@ const AdminProducts = () => {
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-2">{product.name[lang]}</h3>
               <p className="text-gray-600 mb-4 line-clamp-2">{product.description[lang]}</p>
-              <div className="text-sm text-gray-500 mb-4">{product.category}</div>
+              
+              {/* ✅ Display category label */}
+              <div className="text-sm text-gray-500 mb-4">
+                {categories.find(c => c.value === product.category)?.label[lang] || product.category}
+              </div>
               
               <div className="flex gap-2">
                 <button
@@ -340,27 +362,33 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              {/* Category */}
+              {/* Category - ✅ Dynamic */}
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Category *</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  {lang === 'ar' ? 'التصنيف' : 'Category'} *
+                </label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({...formData, category: e.target.value})}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-primary"
                 >
-                  <option value="pickled-olives">Pickled Olives</option>
-                  <option value="olive-oil">Olive Oil</option>
-                  <option value="olive-paste">Olive Paste</option>
-                  <option value="stuffed-olives">Stuffed Olives</option>
-                  <option value="other">Other</option>
+                  {categories.length === 0 ? (
+                    <option value="">{lang === 'ar' ? 'لا توجد تصنيفات - أضف تصنيفاً أولاً' : 'No categories - Add one first'}</option>
+                  ) : (
+                    categories.map(cat => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label[lang] || cat.label.en}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 
               {/* Images */}
               <div>
                 <label className="block text-gray-700 font-medium mb-2">
-                  Images (Max 5) {editingProduct && '- Leave empty to keep existing images'}
+                  {lang === 'ar' ? 'الصور (حد أقصى 5)' : 'Images (Max 5)'} {editingProduct && (lang === 'ar' ? '- اتركه فارغاً للاحتفاظ بالصور الحالية' : '- Leave empty to keep existing images')}
                 </label>
                 <input
                   type="file"

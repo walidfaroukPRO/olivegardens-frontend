@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   FaTachometerAlt, FaBox, FaEnvelope, FaImage, FaUsers,
-  FaCog, FaSignOutAlt, FaBars, FaTimes, FaFileAlt
+  FaCog, FaSignOutAlt, FaBars, FaTimes, FaFileAlt, FaTags
 } from 'react-icons/fa';
 
 // Admin subcomponents
@@ -13,6 +13,7 @@ import AdminMessages from '../components/admin/AdminMessages';
 import AdminGallery from '../components/admin/AdminGallery';
 import AdminUsers from '../components/admin/AdminUsers';
 import AdminOverview from '../components/admin/AdminOverview';
+import AdminCategories from '../components/admin/AdminCategories';
 
 /**
  * Improved Admin Dashboard
@@ -82,6 +83,11 @@ const AdminDashboard = () => {
       id: 'products',
       icon: <FaBox />,
       label: { en: 'Products', ar: 'المنتجات', es: 'Productos' }
+    },
+    {
+      id: 'categories',
+      icon: <FaTags />,
+      label: { en: 'Categories', ar: 'التصنيفات', es: 'Categorías' }
     },
     {
       id: 'messages',
@@ -243,6 +249,7 @@ const AdminDashboard = () => {
           <div className="bg-white rounded-2xl shadow-xl p-6">
             {activeTab === 'overview' && <AdminOverview />}
             {activeTab === 'products' && <AdminProducts />}
+            {activeTab === 'categories' && <AdminCategories />}
             {activeTab === 'messages' && <AdminMessages />}
             {activeTab === 'gallery' && <AdminGallery />}
             {activeTab === 'users' && <AdminUsers />}
