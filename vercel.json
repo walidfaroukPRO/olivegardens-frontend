@@ -66,6 +66,10 @@
     {
       "source": "/uploads/:path*",
       "destination": "https://olivegardens-backend-production-d1a4.up.railway.app/uploads/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
