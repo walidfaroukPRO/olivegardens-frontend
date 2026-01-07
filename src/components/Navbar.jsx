@@ -55,21 +55,24 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <motion.div 
-              initial={{ rotate: -20 }} 
-              animate={{ rotate: 0 }} 
-              transition={{ type: 'spring', stiffness: 150 }}
-              className="text-3xl"
-            >
-              🫒
-            </motion.div>
-            <div className="text-2xl font-extrabold bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
-              OliveGardens
-            </div>
-          </Link>
-
+{/* Logo */}
+<Link to="/" className="flex items-center gap-3">
+  <motion.div 
+    initial={{ rotate: -20 }} 
+    animate={{ rotate: 0 }} 
+    transition={{ type: 'spring', stiffness: 150 }}
+    className="w-12 h-12"
+  >
+    <img 
+      src="/logo.png" 
+      alt="OliveGardens Logo" 
+      className="w-full h-full object-contain"
+    />
+  </motion.div>
+  <div className="text-2xl font-extrabold bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
+    OliveGardens
+  </div>
+</Link>
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
