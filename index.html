@@ -2,45 +2,128 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Security Meta Tags -->
+    <!-- ========================================
+         SECURITY META TAGS
+    ======================================== -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="OliveGardens - Premium quality olive products exported worldwide since 1980. High-quality pickled olives, olive oil, and more.">
-    <meta name="keywords" content="olive, olive oil, pickled olives, export, olive products, OliveGardens, Egypt">
+    <!-- ========================================
+         SEO META TAGS
+    ======================================== -->
+    <meta name="description" content="OliveGardens - Premium quality olive products exported worldwide since 1980. Specializing in pickled olives, olive oil, olive paste, and more. ISO certified Egyptian company.">
+    <meta name="keywords" content="olive, olive oil, pickled olives, olive export, Egyptian olives, premium olives, ISO certified, OliveGardens, زيتون, زيت زيتون, olive products, green olives, black olives, stuffed olives">
     <meta name="author" content="OliveGardens">
     <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="rating" content="general">
+    <meta name="distribution" content="global">
     
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="OliveGardens - Premium Olive Products">
-    <meta property="og:description" content="Premium quality olive products exported worldwide since 1980">
+    <!-- ========================================
+         OPEN GRAPH META TAGS (Facebook, LinkedIn)
+    ======================================== -->
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OliveGardens">
+    <meta property="og:title" content="OliveGardens - Premium Olive Products Since 1980">
+    <meta property="og:description" content="Premium quality olive products exported worldwide. ISO certified Egyptian company specializing in pickled olives, olive oil, and more.">
     <meta property="og:url" content="https://olivegardens-frontend.vercel.app">
-    <meta property="og:image" content="/logo.png">
+    <meta property="og:image" content="https://olivegardens-frontend.vercel.app/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="ar_EG">
+    <meta property="og:locale:alternate" content="es_ES">
     
-    <!-- Twitter Card Meta Tags -->
+    <!-- ========================================
+         TWITTER CARD META TAGS
+    ======================================== -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="OliveGardens - Premium Olive Products">
-    <meta name="twitter:description" content="Premium quality olive products exported worldwide since 1980">
-    <meta name="twitter:image" content="/logo.png">
+    <meta name="twitter:site" content="@olivegardens">
+    <meta name="twitter:creator" content="@olivegardens">
+    <meta name="twitter:title" content="OliveGardens - Premium Olive Products Since 1980">
+    <meta name="twitter:description" content="Premium quality olive products exported worldwide. ISO certified Egyptian company.">
+    <meta name="twitter:image" content="https://olivegardens-frontend.vercel.app/logo.png">
+    <meta name="twitter:image:alt" content="OliveGardens Logo">
     
-    <!-- Theme Color -->
+    <!-- ========================================
+         MOBILE & THEME
+    ======================================== -->
     <meta name="theme-color" content="#4A7C59">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OliveGardens">
     
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="/logo.png">
-    
-    <!-- Manifest -->
+    <!-- ========================================
+         ICONS & MANIFEST
+    ======================================== -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/logo.png">
     <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/logo.png" color="#4A7C59">
     
-    <title>OliveGardens - Premium Olive Products</title>
+    <!-- ========================================
+         PRECONNECT FOR PERFORMANCE
+    ======================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://olivegardens-backend-production-d1a4.up.railway.app">
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
+    
+    <!-- ========================================
+         CANONICAL URL
+    ======================================== -->
+    <link rel="canonical" href="https://olivegardens-frontend.vercel.app">
+    
+    <!-- ========================================
+         STRUCTURED DATA (JSON-LD)
+    ======================================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "OliveGardens",
+      "url": "https://olivegardens-frontend.vercel.app",
+      "logo": "https://olivegardens-frontend.vercel.app/logo.png",
+      "description": "Premium quality olive products exported worldwide since 1980",
+      "foundingDate": "1980",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cairo",
+        "addressCountry": "Egypt"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+20-122-073-9090",
+        "contactType": "Customer Service",
+        "email": "info@olivegardenseg.com"
+      },
+      "sameAs": [
+        "https://facebook.com/olivegardens",
+        "https://twitter.com/olivegardens",
+        "https://instagram.com/olivegardens",
+        "https://linkedin.com/company/olivegardens"
+      ]
+    }
+    </script>
+    
+    <title>OliveGardens - Premium Olive Products | Export Since 1980 🫒</title>
   </head>
   <body>
+    <noscript>
+      <div style="padding: 20px; text-align: center; background: #f8d7da; color: #721c24;">
+        <h1>⚠️ JavaScript Required</h1>
+        <p>This application requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+        <p style="margin-top: 10px; font-size: 14px;">هذا التطبيق يتطلب JavaScript للعمل. يرجى تفعيل JavaScript في إعدادات المتصفح.</p>
+      </div>
+    </noscript>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
