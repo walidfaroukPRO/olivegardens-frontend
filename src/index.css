@@ -1,46 +1,192 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
+/* ============================================
+   GOOGLE FONTS IMPORT
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;600;700;800;900&family=Almarai:wght@400;700;800&family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+/* ============================================
+   TAILWIND BASE
+   ============================================ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   CSS RESET
+   ============================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Poppins', sans-serif;
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-[dir="rtl"] body {
-  font-family: 'Cairo', sans-serif;
+/* ============================================
+   ROOT VARIABLES
+   ============================================ */
+:root {
+  /* Arabic Fonts */
+  --font-arabic-primary: 'Cairo', 'Tajawal', -apple-system, sans-serif;
+  --font-arabic-secondary: 'Tajawal', 'Cairo', sans-serif;
+  --font-arabic-display: 'Almarai', 'Cairo', sans-serif;
+  
+  /* English Fonts */
+  --font-english-primary: 'Inter', 'Poppins', -apple-system, sans-serif;
+  --font-english-secondary: 'Poppins', 'Inter', sans-serif;
+  
+  /* Colors */
+  --color-primary: #2E7D32;
+  --color-primary-dark: #1B5E20;
+  --color-primary-light: #4CAF50;
+  
+  /* Transitions */
+  --transition-base: all 0.3s ease;
+  --transition-fast: all 0.15s ease;
+  --transition-slow: all 0.5s ease;
 }
 
+/* ============================================
+   HTML & BODY BASE STYLES
+   ============================================ */
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Custom Scrollbar */
+body {
+  font-family: var(--font-english-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #ffffff;
+  overflow-x: hidden;
+  transition: var(--transition-base);
+}
+
+/* ============================================
+   RTL & LTR DIRECTION CONTROL
+   ============================================ */
+
+/* LTR (English/Spanish) */
+html[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+html[dir="ltr"] body {
+  font-family: var(--font-english-primary);
+}
+
+/* RTL (Arabic) */
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] body {
+  font-family: var(--font-arabic-primary);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.8;
+}
+
+/* ============================================
+   TYPOGRAPHY - RTL SPECIFIC
+   ============================================ */
+
+/* Headings in Arabic */
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4,
+html[dir="rtl"] h5,
+html[dir="rtl"] h6 {
+  font-family: var(--font-arabic-display);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+/* Paragraphs in Arabic */
+html[dir="rtl"] p {
+  font-family: var(--font-arabic-secondary);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.9;
+}
+
+/* Links in Arabic */
+html[dir="rtl"] a {
+  font-family: var(--font-arabic-primary);
+  font-weight: 600;
+}
+
+/* Buttons in Arabic */
+html[dir="rtl"] button,
+html[dir="rtl"] .btn {
+  font-family: var(--font-arabic-primary);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* Input/Textarea in Arabic */
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select {
+  font-family: var(--font-arabic-primary);
+  font-weight: 500;
+  text-align: right;
+  direction: rtl;
+}
+
+html[dir="rtl"] input::placeholder,
+html[dir="rtl"] textarea::placeholder {
+  font-family: var(--font-arabic-secondary);
+  font-weight: 400;
+  text-align: right;
+  direction: rtl;
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2E7D32;
-  border-radius: 5px;
+  background: var(--color-primary);
+  border-radius: 6px;
+  border: 2px solid #f1f1f1;
+  transition: var(--transition-fast);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1B5E20;
+  background: var(--color-primary-dark);
 }
 
-/* Animations */
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) #f1f1f1;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* Fade In */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -52,14 +198,389 @@ html {
   }
 }
 
+/* Slide In from Right (for RTL) */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In from Left (for LTR) */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Animation Classes */
 .animate-fadeIn {
   animation: fadeIn 0.6s ease-out;
 }
 
-/* Line clamp utility */
+.animate-slideInRight {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* RTL-specific animations */
+html[dir="rtl"] .animate-slideInLeft {
+  animation: slideInRight 0.6s ease-out;
+}
+
+html[dir="rtl"] .animate-slideInRight {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Line Clamp */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Text Gradient */
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Shadow Utilities */
+.shadow-primary {
+  box-shadow: 0 4px 20px rgba(46, 125, 50, 0.15);
+}
+
+.shadow-primary-lg {
+  box-shadow: 0 10px 40px rgba(46, 125, 50, 0.2);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.hover-scale {
+  transition: var(--transition-base);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* ============================================
+   RTL FLEX & GRID ADJUSTMENTS
+   ============================================ */
+
+/* Flex Direction */
+html[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .flex-row-reverse {
+  flex-direction: row;
+}
+
+/* Text Alignment */
+html[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+html[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+/* Margins & Padding RTL */
+html[dir="rtl"] .ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir="rtl"] .mr-auto {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+html[dir="rtl"] .pl-4 {
+  padding-left: 0;
+  padding-right: 1rem;
+}
+
+html[dir="rtl"] .pr-4 {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+/* Border Radius RTL */
+html[dir="rtl"] .rounded-l {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+html[dir="rtl"] .rounded-r {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   FOCUS STYLES
+   ============================================ */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   SELECTION COLORS
+   ============================================ */
+::selection {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  html[dir="rtl"] * {
+    font-family: 'Cairo', sans-serif !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  html[dir="rtl"] * {
+    font-weight: 600 !important;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================ */
+
+/* Mobile First */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+  
+  html[dir="rtl"] body {
+    font-size: 15px;
+    line-height: 1.9;
+  }
+}
+
+/* Tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+  body {
+    font-size: 15px;
+  }
+  
+  html[dir="rtl"] body {
+    font-size: 16px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  body {
+    font-size: 16px;
+  }
+  
+  html[dir="rtl"] body {
+    font-size: 16px;
+  }
+}
+
+/* ============================================
+   DARK MODE SUPPORT (Optional)
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  /* Add dark mode styles if needed */
+}
+
+/* ============================================
+   CUSTOM UTILITY CLASSES
+   ============================================ */
+
+/* Arabic Number Formatting */
+html[dir="rtl"] .numbers-ltr {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Prevent Text Selection */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth Transform */
+.smooth-transform {
+  transition: transform var(--transition-base);
+}
+
+/* Full Width Container */
+.container-full {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Center Content */
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ============================================
+   END OF STYLES
+   ============================================ */
