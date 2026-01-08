@@ -18,6 +18,22 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // grid or list
 
+  // ✅ Add custom scrollbar hide CSS
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -137,8 +153,8 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       
-      {/* ===== HERO SECTION - Enhanced ===== */}
-      <section className="relative h-[60vh] bg-gradient-to-br from-primary via-green-600 to-dark overflow-hidden mt-[68px]">
+      {/* ===== HERO SECTION - Compact & Modern ===== */}
+      <section className="relative h-[45vh] md:h-[50vh] bg-gradient-to-br from-primary via-green-600 to-dark overflow-hidden mt-[68px]">
         {/* Animated Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -148,21 +164,20 @@ const Products = () => {
 
         {/* Floating Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(15)].map((_, i) => (
+          {[...Array(10)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-3 h-3 bg-white/20 rounded-full"
+              className="absolute w-2 h-2 bg-white/20 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                y: [0, -40, 0],
-                opacity: [0.2, 0.8, 0.2],
-                scale: [1, 1.5, 1]
+                y: [0, -30, 0],
+                opacity: [0.2, 0.6, 0.2],
               }}
               transition={{
-                duration: 4 + Math.random() * 3,
+                duration: 3 + Math.random() * 2,
                 repeat: Infinity,
                 delay: Math.random() * 2
               }}
@@ -174,68 +189,68 @@ const Products = () => {
         <div className="relative h-full flex items-center justify-center text-white">
           <div className="max-w-5xl mx-auto px-6 text-center">
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.6 }}
             >
               {/* Icon */}
               <motion.div
                 initial={{ scale: 0 }}
-                animate={{ scale: 1, rotate: 360 }}
+                animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-                className="inline-block mb-6"
+                className="inline-block mb-4"
               >
-                <div className="w-24 h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/20">
-                  <FaBox className="text-5xl" />
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/20">
+                  <FaBox className="text-3xl" />
                 </div>
               </motion.div>
 
               {/* Title */}
-              <h1 className={`text-5xl md:text-7xl font-black mb-6 ${isRTL ? 'font-arabic' : ''}`}>
+              <h1 className={`text-4xl md:text-6xl font-black mb-4 ${isRTL ? 'font-arabic' : ''}`}>
                 {lang === 'ar' ? 'منتجاتنا المميزة' : lang === 'es' ? 'Nuestros Productos' : 'Our Premium Products'}
               </h1>
               
               {/* Subtitle */}
-              <p className={`text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed ${isRTL ? 'font-arabic' : ''}`}>
+              <p className={`text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed ${isRTL ? 'font-arabic' : ''}`}>
                 {lang === 'ar' 
-                  ? 'اكتشف مجموعتنا المتنوعة من منتجات الزيتون عالية الجودة المصنوعة بعناية فائقة'
+                  ? 'اكتشف مجموعتنا المتنوعة من منتجات الزيتون عالية الجودة'
                   : lang === 'es'
-                  ? 'Descubra nuestra diversa gama de productos de aceituna premium elaborados con sumo cuidado'
-                  : 'Discover our diverse range of premium olive products crafted with utmost care'}
+                  ? 'Descubra nuestra diversa gama de productos premium'
+                  : 'Discover our diverse range of premium olive products'}
               </p>
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-12">
+              {/* Stats - Compact */}
+              <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto mt-8">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20"
+                  transition={{ delay: 0.3 }}
+                  className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20"
                 >
-                  <div className="text-3xl font-bold">{products.length}</div>
-                  <div className="text-sm text-white/80">
+                  <div className="text-2xl font-bold">{products.length}</div>
+                  <div className="text-xs text-white/80">
                     {lang === 'ar' ? 'منتج' : lang === 'es' ? 'Productos' : 'Products'}
                   </div>
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20"
+                  transition={{ delay: 0.4 }}
+                  className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20"
                 >
-                  <div className="text-3xl font-bold">{categories.length - 1}</div>
-                  <div className="text-sm text-white/80">
+                  <div className="text-2xl font-bold">{categories.length - 1}</div>
+                  <div className="text-xs text-white/80">
                     {lang === 'ar' ? 'تصنيف' : lang === 'es' ? 'Categorías' : 'Categories'}
                   </div>
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20"
+                  transition={{ delay: 0.5 }}
+                  className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20"
                 >
-                  <div className="text-3xl font-bold">100%</div>
-                  <div className="text-sm text-white/80">
+                  <div className="text-2xl font-bold">100%</div>
+                  <div className="text-xs text-white/80">
                     {lang === 'ar' ? 'طبيعي' : lang === 'es' ? 'Natural' : 'Natural'}
                   </div>
                 </motion.div>
@@ -243,84 +258,82 @@ const Products = () => {
             </motion.div>
           </div>
         </div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        >
-          <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2">
-            <div className="w-1 h-3 bg-white/60 rounded-full"></div>
-          </div>
-        </motion.div>
       </section>
 
       {/* ===== SEARCH & FILTER SECTION ===== */}
-      <section className="py-12 bg-white sticky top-[68px] z-40 shadow-md">
+      <section className="py-6 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-6">
           
-          {/* Search Bar - Enhanced */}
+          {/* Search Bar - Compact */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-5"
           >
-            <div className="relative max-w-3xl mx-auto">
-              <div className={`absolute ${isRTL ? 'right-5' : 'left-5'} top-1/2 transform -translate-y-1/2 text-gray-400`}>
-                <FaSearch className="text-xl" />
+            <div className="relative max-w-2xl mx-auto">
+              <div className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2 text-gray-400`}>
+                <FaSearch className="text-base" />
               </div>
               <input
                 type="text"
                 placeholder={lang === 'ar' ? 'ابحث عن المنتجات...' : lang === 'es' ? 'Buscar productos...' : 'Search for products...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full ${isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'} py-5 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-primary text-lg transition-all shadow-sm hover:shadow-md ${
+                className={`w-full ${isRTL ? 'pr-12 pl-12' : 'pl-12 pr-12'} py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-primary text-sm transition-all ${
                   isRTL ? 'font-arabic text-right' : ''
                 }`}
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className={`absolute ${isRTL ? 'left-5' : 'right-5'} top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
+                  className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors`}
                 >
-                  ✕
+                  <span className="text-lg">✕</span>
                 </button>
               )}
             </div>
           </motion.div>
 
-          {/* Category Filter - Stunning Cards */}
-          <div className="mb-6">
-            <div className={`flex items-center gap-3 mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <FaFilter className="text-primary text-xl" />
-              <h3 className={`text-lg font-bold text-gray-700 ${isRTL ? 'font-arabic' : ''}`}>
+          {/* Category Filter - Compact */}
+          <div className="mb-3">
+            <div className={`flex items-center gap-2 mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <FaFilter className="text-primary text-base" />
+              <h3 className={`text-sm font-bold text-gray-700 ${isRTL ? 'font-arabic' : ''}`}>
                 {lang === 'ar' ? 'التصنيفات' : lang === 'es' ? 'Categorías' : 'Categories'}
               </h3>
             </div>
 
-            <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-${Math.min(categories.length, 6)} gap-4`}>
+            {/* Desktop Pills */}
+            <div className="hidden lg:flex lg:flex-wrap lg:gap-2">
               {categories.map((category, index) => {
                 const isActive = selectedCategory === category.value;
                 
-                // ✅ Get emoji or use default
-                let categoryIcon = '🫒'; // Default
+                // ✅ Smart icon/image detection
+                let categoryDisplay = '🫒'; // Default emoji
+                let isImage = false;
                 
                 if (category.image) {
-                  // Check if it's an emoji (single character or emoji)
-                  if (category.image.length <= 2 || /\p{Emoji}/u.test(category.image)) {
-                    categoryIcon = category.image;
+                  // If it's an emoji (short string, no http)
+                  if ((category.image.length <= 2 || /\p{Emoji}/u.test(category.image)) && !category.image.includes('http')) {
+                    categoryDisplay = category.image;
+                    isImage = false;
                   }
-                  // If it's a URL, use default emoji based on category name
-                  else if (category.image.includes('http')) {
+                  // If it's a Cloudinary/HTTP URL - it's an image
+                  else if (category.image.includes('cloudinary') || category.image.includes('http')) {
+                    categoryDisplay = category.image;
+                    isImage = true;
+                  }
+                  // Fallback: map name to emoji
+                  else {
                     const categoryName = (category.label[lang] || category.label.en || '').toLowerCase();
-                    
-                    if (categoryName.includes('green') || categoryName.includes('أخضر')) categoryIcon = '🟢';
-                    else if (categoryName.includes('black') || categoryName.includes('أسود')) categoryIcon = '⚫';
-                    else if (categoryName.includes('oil') || categoryName.includes('زيت')) categoryIcon = '🛢️';
-                    else if (categoryName.includes('stuffed') || categoryName.includes('محشي')) categoryIcon = '🫒';
-                    else if (categoryName.includes('all') || categoryName.includes('جميع')) categoryIcon = '🫒';
-                    else categoryIcon = '🫒';
+                    if (categoryName.includes('green') || categoryName.includes('أخضر')) categoryDisplay = '🟢';
+                    else if (categoryName.includes('black') || categoryName.includes('أسود')) categoryDisplay = '⚫';
+                    else if (categoryName.includes('oil') || categoryName.includes('زيت')) categoryDisplay = '🛢️';
+                    else if (categoryName.includes('stuffed') || categoryName.includes('محشي')) categoryDisplay = '🫒';
+                    else if (categoryName.includes('jalapeno') || categoryName.includes('هالبينو')) categoryDisplay = '🌶️';
+                    else if (categoryName.includes('all') || categoryName.includes('جميع')) categoryDisplay = '🫒';
+                    else categoryDisplay = '🫒';
+                    isImage = false;
                   }
                 }
                 
@@ -329,70 +342,142 @@ const Products = () => {
                     key={category.value}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ delay: index * 0.03 }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedCategory(category.value)}
-                    className={`relative overflow-hidden rounded-2xl p-6 transition-all duration-300 group ${
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-300 ${
                       isActive
-                        ? 'bg-gradient-to-br from-primary to-green-600 text-white shadow-xl ring-4 ring-primary/20'
-                        : 'bg-white text-gray-700 hover:bg-gradient-to-br hover:from-primary hover:to-green-600 hover:text-white shadow-lg hover:shadow-xl border-2 border-gray-100'
-                    }`}
+                        ? 'bg-gradient-to-r from-primary to-green-600 text-white shadow-md ring-2 ring-primary/20'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200'
+                    } ${isRTL ? 'flex-row-reverse' : ''}`}
                   >
-                    {/* Background Pattern */}
-                    <div className="absolute inset-0 opacity-5">
-                      <div className="absolute inset-0" style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.4'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                      }}></div>
-                    </div>
+                    {/* Icon/Image/Emoji */}
+                    {isImage ? (
+                      <img 
+                        src={categoryDisplay} 
+                        alt={category.label[lang] || category.label.en}
+                        className="w-5 h-5 rounded-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'inline';
+                        }}
+                      />
+                    ) : null}
+                    {!isImage && <span className="text-lg">{categoryDisplay}</span>}
+                    
+                    {/* Hidden emoji fallback for image errors */}
+                    {isImage && <span className="text-lg" style={{ display: 'none' }}>🫒</span>}
+                    
+                    {/* Label */}
+                    <span className={`font-semibold text-xs whitespace-nowrap ${isRTL ? 'font-arabic' : ''}`}>
+                      {category.label[lang] || category.label.en}
+                    </span>
 
-                    {/* Content */}
-                    <div className="relative">
-                      {/* Icon/Emoji */}
-                      <div className="text-4xl mb-3 transform group-hover:scale-110 transition-transform">
-                        {categoryIcon}
-                      </div>
-                      
-                      {/* Label */}
-                      <div className={`font-bold text-sm ${isRTL ? 'font-arabic' : ''}`}>
-                        {category.label[lang] || category.label.en}
-                      </div>
-
-                      {/* Active Indicator */}
-                      {isActive && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="absolute -top-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center"
-                        >
-                          <FaStar className="text-yellow-500 text-xs" />
-                        </motion.div>
-                      )}
-                    </div>
+                    {/* Active Indicator */}
+                    {isActive && (
+                      <FaStar className="text-yellow-300 text-[10px]" />
+                    )}
                   </motion.button>
                 );
               })}
             </div>
+
+            {/* Mobile/Tablet Horizontal Scroll */}
+            <div className="lg:hidden overflow-x-auto pb-3 -mx-6 px-6 scrollbar-hide">
+              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`} style={{ minWidth: 'max-content' }}>
+                {categories.map((category, index) => {
+                  const isActive = selectedCategory === category.value;
+                  
+                  // ✅ Smart icon/image detection
+                  let categoryDisplay = '🫒';
+                  let isImage = false;
+                  
+                  if (category.image) {
+                    if ((category.image.length <= 2 || /\p{Emoji}/u.test(category.image)) && !category.image.includes('http')) {
+                      categoryDisplay = category.image;
+                      isImage = false;
+                    } else if (category.image.includes('cloudinary') || category.image.includes('http')) {
+                      categoryDisplay = category.image;
+                      isImage = true;
+                    } else {
+                      const categoryName = (category.label[lang] || category.label.en || '').toLowerCase();
+                      if (categoryName.includes('green') || categoryName.includes('أخضر')) categoryDisplay = '🟢';
+                      else if (categoryName.includes('black') || categoryName.includes('أسود')) categoryDisplay = '⚫';
+                      else if (categoryName.includes('oil') || categoryName.includes('زيت')) categoryDisplay = '🛢️';
+                      else if (categoryName.includes('stuffed') || categoryName.includes('محشي')) categoryDisplay = '🫒';
+                      else if (categoryName.includes('jalapeno') || categoryName.includes('هالبينو')) categoryDisplay = '🌶️';
+                      else if (categoryName.includes('all') || categoryName.includes('جميع')) categoryDisplay = '🫒';
+                      else categoryDisplay = '🫒';
+                      isImage = false;
+                    }
+                  }
+                  
+                  return (
+                    <motion.button
+                      key={category.value}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setSelectedCategory(category.value)}
+                      className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 ${
+                        isActive
+                          ? 'bg-gradient-to-r from-primary to-green-600 text-white shadow-md ring-2 ring-primary/20'
+                          : 'bg-white text-gray-700 shadow-sm border border-gray-200'
+                      } ${isRTL ? 'flex-row-reverse' : ''}`}
+                    >
+                      {/* Icon/Image/Emoji */}
+                      {isImage ? (
+                        <img 
+                          src={categoryDisplay} 
+                          alt={category.label[lang] || category.label.en}
+                          className="w-4 h-4 rounded-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'inline';
+                          }}
+                        />
+                      ) : null}
+                      {!isImage && <span className="text-base">{categoryDisplay}</span>}
+                      
+                      {/* Hidden emoji fallback */}
+                      {isImage && <span className="text-base" style={{ display: 'none' }}>🫒</span>}
+                      
+                      {/* Label */}
+                      <span className={`font-semibold text-[11px] whitespace-nowrap ${isRTL ? 'font-arabic' : ''}`}>
+                        {category.label[lang] || category.label.en}
+                      </span>
+
+                      {/* Active Indicator */}
+                      {isActive && (
+                        <FaStar className="text-yellow-300 text-[10px]" />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          {/* Results Summary */}
+          {/* Results Summary - Compact */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className={`flex items-center justify-between py-4 border-t-2 border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}
+            className={`flex items-center py-2 border-t border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}
           >
             <div className={`text-gray-600 ${isRTL ? 'font-arabic' : ''}`}>
-              <span className="font-bold text-2xl text-primary">{filteredProducts.length}</span>{' '}
-              <span className="text-lg">
-                {lang === 'ar' ? 'منتج متاح' : lang === 'es' ? 'productos disponibles' : 'products available'}
+              <span className="font-bold text-lg text-primary">{filteredProducts.length}</span>{' '}
+              <span className="text-sm">
+                {lang === 'ar' ? 'منتج' : lang === 'es' ? 'productos' : 'products'}
               </span>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ===== PRODUCTS GRID - Stunning Cards ===== */}
-      <section className="py-16">
+      {/* ===== PRODUCTS GRID - Compact Cards ===== */}
+      <section className="py-10">
         <div className="max-w-7xl mx-auto px-6">
           <AnimatePresence mode="wait">
             {filteredProducts.length === 0 ? (
@@ -400,16 +485,16 @@ const Products = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="text-center py-24"
+                className="text-center py-16"
               >
-                <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FaBox className="text-6xl text-gray-300" />
+                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaBox className="text-5xl text-gray-300" />
                 </div>
-                <h3 className={`text-2xl font-bold text-gray-700 mb-2 ${isRTL ? 'font-arabic' : ''}`}>
+                <h3 className={`text-xl font-bold text-gray-700 mb-2 ${isRTL ? 'font-arabic' : ''}`}>
                   {lang === 'ar' ? 'لا توجد منتجات' : lang === 'es' ? 'No hay productos' : 'No products found'}
                 </h3>
-                <p className={`text-gray-500 ${isRTL ? 'font-arabic' : ''}`}>
-                  {lang === 'ar' ? 'جرب تغيير التصنيف أو البحث' : lang === 'es' ? 'Intenta cambiar la categoría o buscar' : 'Try changing the category or search term'}
+                <p className={`text-gray-500 text-sm ${isRTL ? 'font-arabic' : ''}`}>
+                  {lang === 'ar' ? 'جرب تغيير التصنيف أو البحث' : lang === 'es' ? 'Intenta cambiar la categoría' : 'Try changing the category or search term'}
                 </p>
               </motion.div>
             ) : (
@@ -418,22 +503,22 @@ const Products = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
                 {filteredProducts.map((product, index) => (
                   <motion.div 
                     key={product._id}
-                    initial={{ opacity: 0, y: 60 }}
+                    initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-100px' }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
-                    whileHover={{ y: -10 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ delay: index * 0.05, duration: 0.4 }}
+                    whileHover={{ y: -8 }}
                     className="group"
                   >
-                    <div className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 border border-gray-100">
+                    <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-500 border border-gray-100">
                       
                       {/* Image Container */}
-                      <div className="relative h-80 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                         <motion.img 
                           src={getImageUrl(product)}
                           alt={product.name?.[lang] || product.name?.en || 'Product'}
@@ -498,46 +583,46 @@ const Products = () => {
                       </div>
 
                       {/* Product Info */}
-                      <div className="p-6">
+                      <div className="p-5">
                         {/* Title */}
-                        <h3 className={`text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-primary transition-colors ${
+                        <h3 className={`text-lg font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-primary transition-colors ${
                           isRTL ? 'font-arabic text-right' : ''
                         }`}>
                           {product.name?.[lang] || product.name?.en || 'Unnamed Product'}
                         </h3>
                         
                         {/* Description */}
-                        <p className={`text-gray-600 mb-4 line-clamp-2 leading-relaxed text-sm ${
+                        <p className={`text-gray-600 mb-3 line-clamp-2 leading-relaxed text-xs ${
                           isRTL ? 'font-arabic text-right' : ''
                         }`}>
                           {product.description?.[lang] || product.description?.en || ''}
                         </p>
 
                         {/* Footer */}
-                        <div className={`flex items-center justify-between pt-4 border-t border-gray-100 ${
+                        <div className={`flex items-center justify-between pt-3 border-t border-gray-100 ${
                           isRTL ? 'flex-row-reverse' : ''
                         }`}>
                           {/* Price */}
                           {product.price && (
                             <div className="flex items-baseline gap-1">
-                              <span className="text-2xl font-black text-primary">
+                              <span className="text-xl font-black text-primary">
                                 ${product.price}
                               </span>
-                              <span className="text-sm text-gray-500">USD</span>
+                              <span className="text-xs text-gray-500">USD</span>
                             </div>
                           )}
                           
                           {/* Details Button */}
                           <Link
                             to={`/products/${product._id}`}
-                            className={`flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-green-600 text-white rounded-full font-bold shadow-md hover:shadow-xl transition-all hover:scale-105 ${
+                            className={`flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-primary to-green-600 text-white rounded-full font-bold shadow-md hover:shadow-lg transition-all hover:scale-105 ${
                               isRTL ? 'flex-row-reverse font-arabic' : ''
                             }`}
                           >
-                            <span className="text-sm">
+                            <span className="text-xs">
                               {lang === 'ar' ? 'التفاصيل' : lang === 'es' ? 'Detalles' : 'Details'}
                             </span>
-                            <FaArrowRight className={`text-xs ${isRTL ? 'rotate-180' : ''}`} />
+                            <FaArrowRight className={`text-[10px] ${isRTL ? 'rotate-180' : ''}`} />
                           </Link>
                         </div>
                       </div>
@@ -550,8 +635,8 @@ const Products = () => {
         </div>
       </section>
 
-      {/* ===== CTA SECTION - Enhanced ===== */}
-      <section className="py-24 bg-gradient-to-br from-primary via-green-600 to-dark text-white relative overflow-hidden">
+      {/* ===== CTA SECTION - Compact ===== */}
+      <section className="py-16 bg-gradient-to-br from-primary via-green-600 to-dark text-white relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -559,39 +644,39 @@ const Products = () => {
           }}></div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
           >
             {/* Icon */}
-            <div className="inline-block mb-6">
-              <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <HiSparkles className="text-4xl" />
+            <div className="inline-block mb-4">
+              <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <HiSparkles className="text-3xl" />
               </div>
             </div>
 
             {/* Title */}
-            <h2 className={`text-4xl md:text-5xl font-black mb-6 ${isRTL ? 'font-arabic' : ''}`}>
+            <h2 className={`text-3xl md:text-4xl font-black mb-4 ${isRTL ? 'font-arabic' : ''}`}>
               {lang === 'ar' ? 'لم تجد ما تبحث عنه؟' : lang === 'es' ? '¿No encontraste lo que buscas?' : 'Didn\'t Find What You\'re Looking For?'}
             </h2>
             
             {/* Description */}
-            <p className={`text-xl mb-10 text-white/90 max-w-2xl mx-auto ${isRTL ? 'font-arabic' : ''}`}>
+            <p className={`text-lg mb-8 text-white/90 max-w-xl mx-auto ${isRTL ? 'font-arabic' : ''}`}>
               {lang === 'ar'
-                ? 'تواصل معنا اليوم وسنساعدك في إيجاد المنتج المثالي لاحتياجاتك'
+                ? 'تواصل معنا اليوم وسنساعدك في إيجاد المنتج المثالي'
                 : lang === 'es'
-                ? 'Contáctenos hoy y le ayudaremos a encontrar el producto perfecto'
-                : 'Contact us today and we\'ll help you find the perfect product for your needs'}
+                ? 'Contáctenos hoy para encontrar el producto perfecto'
+                : 'Contact us today to find the perfect product for your needs'}
             </p>
 
             {/* Buttons */}
-            <div className={`flex gap-4 justify-center flex-wrap ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex gap-3 justify-center flex-wrap ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Link
                 to="/contact"
-                className={`group px-10 py-4 bg-white text-primary font-bold rounded-full hover:shadow-2xl transition-all hover:scale-105 ${
+                className={`group px-8 py-3 bg-white text-primary font-bold rounded-full hover:shadow-2xl transition-all hover:scale-105 ${
                   isRTL ? 'font-arabic' : ''
                 }`}
               >
@@ -603,7 +688,7 @@ const Products = () => {
               
               <Link
                 to="/about"
-                className={`px-10 py-4 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-primary transition-all ${
+                className={`px-8 py-3 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-primary transition-all ${
                   isRTL ? 'font-arabic' : ''
                 }`}
               >

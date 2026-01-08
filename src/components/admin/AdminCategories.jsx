@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
-import toast from 'react-hot-toast';
+import { FaPlus, FaEdit, FaTrash, FaImage, FaTimes, FaUpload } from 'react-icons/fa';
+import toast, { Toaster } from 'react-hot-toast';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   
-  // ✅ Matching the actual schema: label + value
   const [formData, setFormData] = useState({
     label: { en: '', ar: '', es: '' },
     value: '',
@@ -26,20 +29,103 @@ const AdminCategories = () => {
   const fetchCategories = async () => {
     try {
       const response = await axios.get('/api/categories');
-      console.log('Categories fetched:', response.data);
+      console.log('✅ Categories fetched:', response.data);
       setCategories(response.data.categories || response.data || []);
       setLoading(false);
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('❌ Fetch error:', error);
       toast.error('Failed to load categories');
       setLoading(false);
     }
   };
 
+  // ✅ Handle image file selection
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB');
+      return;
+    }
+    
+    setSelectedFile(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ✅ Upload image to Cloudinary
+  const uploadImageToCloudinary = async () => {
+    if (!selectedFile) {
+      toast.error('Please select an image first');
+      return null;
+    }
+    
+    setUploadingImage(true);
+    setUploadProgress(0);
+    
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('image', selectedFile);
+      
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.post(
+        '/api/upload/category-image',
+        formDataUpload,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
+          }
+        }
+      );
+      
+      console.log('✅ Image uploaded:', response.data);
+      
+      toast.success('Image uploaded successfully!');
+      setUploadingImage(false);
+      
+      return response.data.url; // Return Cloudinary URL
+      
+    } catch (error) {
+      console.error('❌ Upload error:', error);
+      toast.error(error.response?.data?.message || 'Failed to upload image');
+      setUploadingImage(false);
+      return null;
+    }
+  };
+
+  // ✅ Remove image
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setImagePreview(null);
+    setFormData({ ...formData, image: '' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // ✅ Validation
+    // Validation
     if (!formData.label.en || !formData.label.ar || !formData.label.es) {
       toast.error('Category label in all languages is required');
       return;
@@ -50,8 +136,6 @@ const AdminCategories = () => {
       return;
     }
     
-    console.log('Submitting:', formData);
-    
     try {
       const token = localStorage.getItem('token');
       
@@ -59,6 +143,27 @@ const AdminCategories = () => {
         toast.error('Please login first');
         return;
       }
+      
+      // ✅ Upload image if selected
+      let imageUrl = formData.image;
+      
+      if (selectedFile) {
+        const uploadedUrl = await uploadImageToCloudinary();
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        } else {
+          toast.error('Failed to upload image');
+          return;
+        }
+      }
+      
+      // Prepare data with uploaded image
+      const categoryData = {
+        ...formData,
+        image: imageUrl
+      };
+      
+      console.log('📤 Submitting:', categoryData);
       
       const config = {
         headers: {
@@ -69,21 +174,19 @@ const AdminCategories = () => {
       
       if (editingId) {
         // Update
-        const response = await axios.put(
+        await axios.put(
           `/api/categories/${editingId}`,
-          formData,
+          categoryData,
           config
         );
-        console.log('Update response:', response.data);
         toast.success('Category updated successfully');
       } else {
         // Create
-        const response = await axios.post(
+        await axios.post(
           '/api/categories',
-          formData,
+          categoryData,
           config
         );
-        console.log('Create response:', response.data);
         toast.success('Category created successfully');
       }
       
@@ -95,6 +198,8 @@ const AdminCategories = () => {
         order: 0,
         isActive: true
       });
+      setSelectedFile(null);
+      setImagePreview(null);
       setEditingId(null);
       setShowForm(false);
       
@@ -102,9 +207,7 @@ const AdminCategories = () => {
       fetchCategories();
       
     } catch (error) {
-      console.error('Submit error:', error);
-      console.error('Error response:', error.response?.data);
-      
+      console.error('❌ Submit error:', error);
       const errorMessage = error.response?.data?.message || 'Failed to save category';
       toast.error(errorMessage);
     }
@@ -118,6 +221,12 @@ const AdminCategories = () => {
       order: category.order || 0,
       isActive: category.isActive !== undefined ? category.isActive : true
     });
+    
+    // Set image preview if exists
+    if (category.image) {
+      setImagePreview(category.image);
+    }
+    
     setEditingId(category._id);
     setShowForm(true);
   };
@@ -136,7 +245,7 @@ const AdminCategories = () => {
       toast.success('Category deleted successfully');
       fetchCategories();
     } catch (error) {
-      console.error('Delete error:', error);
+      console.error('❌ Delete error:', error);
       toast.error('Failed to delete category');
     }
   };
@@ -149,6 +258,8 @@ const AdminCategories = () => {
       order: 0,
       isActive: true
     });
+    setSelectedFile(null);
+    setImagePreview(null);
     setEditingId(null);
     setShowForm(false);
   };
@@ -172,6 +283,8 @@ const AdminCategories = () => {
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-right" />
+      
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">Categories</h2>
@@ -210,7 +323,6 @@ const AdminCategories = () => {
                     setFormData({
                       ...formData,
                       label: { ...formData.label, en: newLabel },
-                      // Auto-generate value if not editing
                       value: !editingId ? generateValue(newLabel) : formData.value
                     });
                   }}
@@ -256,7 +368,7 @@ const AdminCategories = () => {
               </div>
             </div>
 
-            {/* Value (auto-generated) */}
+            {/* Value */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Value (URL-friendly identifier) *
@@ -274,18 +386,69 @@ const AdminCategories = () => {
               </p>
             </div>
 
-            {/* Image URL */}
+            {/* ✅ Image Upload Section */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Image URL
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Category Image
               </label>
-              <input
-                type="text"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="https://example.com/image.jpg"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-              />
+              
+              {/* Image Preview */}
+              {imagePreview ? (
+                <div className="relative mb-4">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded-lg border-2 border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition shadow-lg"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition">
+                  <FaImage className="mx-auto text-4xl text-gray-400 mb-3" />
+                  <p className="text-sm text-gray-600 mb-3">
+                    Click to upload or drag and drop
+                  </p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                    id="category-image"
+                  />
+                  <label
+                    htmlFor="category-image"
+                    className="cursor-pointer inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                  >
+                    <FaUpload />
+                    Choose Image
+                  </label>
+                  <p className="text-xs text-gray-500 mt-2">
+                    PNG, JPG, GIF up to 5MB
+                  </p>
+                </div>
+              )}
+              
+              {/* Upload Progress */}
+              {uploadingImage && (
+                <div className="mt-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-gray-600">Uploading...</span>
+                    <span className="text-sm font-semibold text-primary">{uploadProgress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Order & Active */}
@@ -319,13 +482,17 @@ const AdminCategories = () => {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition"
+                disabled={uploadingImage}
+                className={`bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition ${
+                  uploadingImage ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
-                {editingId ? 'Update' : 'Create'}
+                {uploadingImage ? 'Uploading...' : editingId ? 'Update' : 'Create'}
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
+                disabled={uploadingImage}
                 className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition"
               >
                 Cancel
@@ -345,11 +512,22 @@ const AdminCategories = () => {
             className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
           >
             {category.image && (
-              <img
-                src={category.image}
-                alt={category.label?.en || category.value}
-                className="w-full h-32 object-cover rounded-lg mb-3"
-              />
+              <div className="relative mb-3">
+                <img
+                  src={category.image}
+                  alt={category.label?.en || category.value}
+                  className="w-full h-32 object-cover rounded-lg"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
+                  }}
+                />
+              </div>
+            )}
+            
+            {!category.image && (
+              <div className="w-full h-32 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                <FaImage className="text-4xl text-gray-300" />
+              </div>
             )}
             
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
